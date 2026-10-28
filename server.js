@@ -2,20 +2,20 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware de registro en tiempo real
+// Middleware para registrar cada intento y desglosarlo en la terminal
 app.use((req, res, next) => {
-    console.log(`[PETICIÓN] -> ${req.method} ${req.url}`);
+    console.log(`[PETICIÓN CAPTURADA] -> Método: ${req.method} | URL: ${req.url}`);
     next();
 });
 
 app.get('/', (req, res) => {
-    res.send('Servidor de Verificación Afnan Activo');
+    res.send('Servidor de Verificación Global Activo');
 });
 
-// Ruta dinámica que captura cualquier hash del QR y responde con el estado exacto "genuine"
-app.get('/verify/:id', (req, res) => {
-    const codigoId = req.params.id;
-    console.log(`✔ Verificando hash con estado genuine: ${codigoId}`);
+// Ruta comodín ultrarresistente: captura cualquier variación en /verify/... o subcarpetas
+app.get(['/verify/:id', '/verify/:id/*'], (req, res) => {
+    const codigoId = req.params.id || 'Hash-Global-Detectado';
+    console.log(`✔ Éxito total: Procesando identificador -> ${codigoId}`);
     
     res.send(`
         <!DOCTYPE html>
@@ -64,14 +64,13 @@ app.get('/verify/:id', (req, res) => {
             </style>
         </head>
         <body style="position: relative; min-height: 100%; top: 0px;">
-            <!-- Estructura oficial exacta con data-state="genuine" -->
             <div class="g2" data-state="genuine">
                 <header class="g2-hero">
                     <h2>Label verified.</h2>
                     <p>This security label is registered to Afnan. To confirm the bottle itself, scan the QR code inside the box.</p>
                 </header>
                 <div class="footer-id">
-                    <strong>Hash / ID Validados en la Nube:</strong><br>${codigoId}
+                    <strong>ID / Hash Sincronizado en la Nube:</strong><br>${codigoId}
                 </div>
             </div>
         </body>
@@ -79,32 +78,12 @@ app.get('/verify/:id', (req, res) => {
     `);
 });
 
-// Manejador por defecto para cualquier otra ruta (simulando danger si no existe)
+// Captura de seguridad para cualquier otra ruta imprevista
 app.get('*', (req, res) => {
-    res.status(404).send(`
-        <!DOCTYPE html>
-        <html lang="en" style="height: 100%;">
-        <head>
-            <meta charset="UTF-8">
-            <title>Afnan Perfumes - Alert</title>
-            <style>
-                body { background-color: #0d1b2a; color: #fff; font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-                .g2 { background-color: #0d1b2a; padding: 50px; }
-                .g2-hero { background-color: #b71c1c; padding: 40px; border-radius: 8px; max-width: 600px; margin: 0 auto; }
-            </style>
-        </head>
-        <body>
-            <div class="g2" data-state="danger">
-                <div class="g2-hero">
-                    <h2>Fake product suspected.</h2>
-                    <p>This product may not be genuine. Please scan the QR code inside the box to verify the bottle itself.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-    `);
+    console.log(`⚠️ Ruta alternativa consultada: ${req.url}`);
+    res.redirect('/');
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor activo en el puerto ${PORT}`);
+    console.log(`Servidor universal en marcha en el puerto ${PORT}`);
 });
