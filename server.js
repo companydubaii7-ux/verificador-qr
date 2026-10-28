@@ -2,26 +2,24 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para registrar cada visita y código en tu terminal en tiempo real
+// Middleware para registar cada tentativa de leitura no terminal
 app.use((req, res, next) => {
-    console.log(`[PETICIÓN RECIBIDA] -> ${req.method} ${req.url}`);
+    console.log(`[VERIFICAÇÃO] -> ${req.method} ${req.url}`);
     next();
 });
 
-// Ruta principal de bienvenida
 app.get('/', (req, res) => {
-    res.send('Servidor de Verificación QR Afnan Activo 24/7');
+    res.send('Servidor de Verificação Afnan Ativo');
 });
 
-// Ruta dinámica que captura el código único del QR
+// Rota dinâmica que captura qualquer ID ou hash do QR code e mostra o ecrã verde oficial
 app.get('/verify/:id', (req, res) => {
     const codigoId = req.params.id;
-    console.log(`✔ Código verificado con éxito: ${codigoId}`);
+    console.log(`✔ Etiqueta validada com sucesso para o ID: ${codigoId}`);
     
-    // Renderizamos la interfaz idéntica a la etiqueta original
     res.send(`
         <!DOCTYPE html>
-        <html lang="es">
+        <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +52,7 @@ app.get('/verify/:id', (req, res) => {
                 h2 { font-size: 20px; margin-top: 0; }
                 p { font-size: 15px; line-height: 1.6; color: #e0e1dd; }
                 .footer-id {
-                    font-size: 12px;
+                    font-size: 11px;
                     color: #90e0ef;
                     word-break: break-all;
                     margin-top: 20px;
@@ -73,7 +71,7 @@ app.get('/verify/:id', (req, res) => {
                 </div>
                 <p>Double-Check Your Perfume's Authenticity</p>
                 <div class="footer-id">
-                    <strong>ID / Hash verificado:</strong><br>${codigoId}
+                    <strong>Hash / ID Detetado:</strong><br>${codigoId}
                 </div>
             </div>
         </body>
@@ -81,31 +79,6 @@ app.get('/verify/:id', (req, res) => {
     `);
 });
 
-// Manejador por si entra cualquier otra ruta desconocida (simulando alerta de falsificación)
-app.get('*', (req, res) => {
-    res.status(404).send(`
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Afnan Perfumes - Alerta</title>
-            <style>
-                body { background-color: #0d1b2a; color: #fff; font-family: Arial, sans-serif; text-align: center; padding: 40px; }
-                .box { background-color: #b71c1c; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; }
-            </style>
-        </head>
-        <body>
-            <div class="box">
-                <h2>Fake product suspected.</h2>
-                <p>This product may not be genuine. Please scan the QR code inside the box to verify the bottle itself.</p>
-            </div>
-        </body>
-        </html>
-    `);
-});
-
-// Iniciar servidor
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor activo y escuchando en el puerto ${PORT}`);
+    console.log(`Servidor a escutar na porta ${PORT}`);
 });
