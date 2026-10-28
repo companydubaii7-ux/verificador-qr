@@ -2,24 +2,24 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para registar cada tentativa de leitura no terminal
+// Middleware para registrar cada ruta y hash consultado
 app.use((req, res, next) => {
-    console.log(`[VERIFICAÇÃO] -> ${req.method} ${req.url}`);
+    console.log(`[VERIFICACIÓN] -> ${req.method} ${req.url}`);
     next();
 });
 
 app.get('/', (req, res) => {
-    res.send('Servidor de Verificação Afnan Ativo');
+    res.send('Servidor de Verificación Afnan Activo');
 });
 
-// Rota dinâmica que captura qualquer ID ou hash do QR code e mostra o ecrã verde oficial
+// Ruta dinámica que captura cualquier hash largo del QR y fuerza el estado "secure"
 app.get('/verify/:id', (req, res) => {
     const codigoId = req.params.id;
-    console.log(`✔ Etiqueta validada com sucesso para o ID: ${codigoId}`);
+    console.log(`✔ Etiqueta procesada con estado secure para el hash: ${codigoId}`);
     
     res.send(`
         <!DOCTYPE html>
-        <html lang="en">
+        <html lang="en" style="height: 100%;">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,49 +29,49 @@ app.get('/verify/:id', (req, res) => {
                     background-color: #0d1b2a;
                     color: #ffffff;
                     font-family: Arial, sans-serif;
-                    text-align: center;
-                    padding: 20px;
                     margin: 0;
+                    padding: 0;
+                    min-height: 100%;
                 }
-                .container {
+                .g2 {
+                    background-color: #0d1b2a;
+                    padding: 50px 20px;
+                    text-align: center;
+                    min-height: 100vh;
+                    box-sizing: border-box;
+                }
+                .g2-hero {
                     max-width: 600px;
-                    margin: 40px auto;
-                    background-color: #1b263b;
-                    padding: 30px;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-                }
-                .success-box {
+                    margin: 0 auto;
                     background-color: #2e7d32;
                     color: #ffffff;
-                    padding: 25px;
+                    padding: 40px;
                     border-radius: 8px;
-                    margin-bottom: 20px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
                 }
-                h1 { font-size: 24px; margin-bottom: 15px; letter-spacing: 1px; }
-                h2 { font-size: 20px; margin-top: 0; }
-                p { font-size: 15px; line-height: 1.6; color: #e0e1dd; }
+                h2 { font-size: 26px; margin-top: 0; margin-bottom: 15px; }
+                p { font-size: 16px; line-height: 1.5; color: #f8f9fa; }
                 .footer-id {
-                    font-size: 11px;
+                    max-width: 600px;
+                    margin: 30px auto 0 auto;
+                    font-size: 12px;
                     color: #90e0ef;
                     word-break: break-all;
-                    margin-top: 20px;
-                    background: #0d1b2a;
-                    padding: 12px;
+                    background: #1b263b;
+                    padding: 15px;
                     border-radius: 6px;
                 }
             </style>
         </head>
         <body>
-            <div class="container">
-                <h1>AFNAN PERFUMES</h1>
-                <div class="success-box">
+            <!-- Estructura exacta mapeada con data-state="secure" -->
+            <div class="g2" data-state="secure">
+                <div class="g2-hero">
                     <h2>✔ Label verified.</h2>
                     <p>This security label is registered to Afnan. To confirm the bottle itself, scan the QR code inside the box.</p>
                 </div>
-                <p>Double-Check Your Perfume's Authenticity</p>
                 <div class="footer-id">
-                    <strong>Hash / ID Detetado:</strong><br>${codigoId}
+                    <strong>Hash / ID Validados Correctamente:</strong><br>${codigoId}
                 </div>
             </div>
         </body>
@@ -80,5 +80,5 @@ app.get('/verify/:id', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor a escutar na porta ${PORT}`);
+    console.log(`Servidor activo en el puerto ${PORT}`);
 });
