@@ -2,20 +2,20 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para registrar cada intento y desglosarlo en la terminal
+// Registrar cada intento de acceso en tiempo real
 app.use((req, res, next) => {
-    console.log(`[PETICIÓN CAPTURADA] -> Método: ${req.method} | URL: ${req.url}`);
+    console.log(`[INTERCEPTACIÓN DE RED] -> Host: ${req.hostname} | Ruta: ${req.url}`);
     next();
 });
 
 app.get('/', (req, res) => {
-    res.send('Servidor de Verificación Global Activo');
+    res.send('Gateway de Verificación Activo');
 });
 
-// Ruta comodín ultrarresistente: captura cualquier variación en /verify/... o subcarpetas
-app.get(['/verify/:id', '/verify/:id/*'], (req, res) => {
-    const codigoId = req.params.id || 'Hash-Global-Detectado';
-    console.log(`✔ Éxito total: Procesando identificador -> ${codigoId}`);
+// Captura universal para rutas tipo /O2Q/... o /verify/...
+app.get(['/O2Q/:id', '/verify/:id', '/O2Q/:id/*', '/verify/:id/*'], (req, res) => {
+    const codigoId = req.params.id || 'Hash-Interceptado';
+    console.log(`✔ ¡Éxito! Redirigiendo y forzando estado genuine para: ${codigoId}`);
     
     res.send(`
         <!DOCTYPE html>
@@ -70,7 +70,7 @@ app.get(['/verify/:id', '/verify/:id/*'], (req, res) => {
                     <p>This security label is registered to Afnan. To confirm the bottle itself, scan the QR code inside the box.</p>
                 </header>
                 <div class="footer-id">
-                    <strong>ID / Hash Sincronizado en la Nube:</strong><br>${codigoId}
+                    <strong>Código / Hash Sincronizado por Redirección:</strong><br>${codigoId}
                 </div>
             </div>
         </body>
@@ -78,12 +78,6 @@ app.get(['/verify/:id', '/verify/:id/*'], (req, res) => {
     `);
 });
 
-// Captura de seguridad para cualquier otra ruta imprevista
-app.get('*', (req, res) => {
-    console.log(`⚠️ Ruta alternativa consultada: ${req.url}`);
-    res.redirect('/');
-});
-
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor universal en marcha en el puerto ${PORT}`);
+    console.log(`Gateway escuchando en el puerto ${PORT}`);
 });
